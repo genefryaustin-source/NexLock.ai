@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>NexlockAI Trust Center</title>
+  <style>
+    body{font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#0b1020;color:#e7ebff}
+    header{padding:24px;background:linear-gradient(135deg,#111a3a,#0b1020);border-bottom:1px solid rgba(255,255,255,.08)}
+    main{max-width:1100px;margin:0 auto;padding:24px}
+    .card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px;margin-bottom:14px}
+    table{width:100%;border-collapse:collapse;background:rgba(255,255,255,.04);border-radius:16px;overflow:hidden}
+    th,td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left}
+    th{font-size:12px;text-transform:uppercase;letter-spacing:.02em;opacity:.9}
+    .pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;border:1px solid rgba(255,255,255,.14)}
+    .ok{background:rgba(80,200,120,.15)} .warn{background:rgba(255,200,80,.15)} .lock{background:rgba(180,180,255,.12)}
+  </style>
+</head>
+<body>
+<header>
+  <h1 style="margin:0">NexlockAI Trust Center</h1>
+  <div id="sub" style="opacity:.85;margin-top:6px"></div>
+</header>
+<main>
+  <div class="card">
+    <div><b>Security Program</b></div>
+    <div id="sp" style="opacity:.9;margin-top:6px"></div>
+  </div>
+
+  <div class="card">
+    <div><b>Controls</b></div>
+    <div style="overflow:auto;margin-top:10px">
+      <table>
+        <thead><tr><th>Area</th><th>Status</th><th>Last Tested</th><th>Details</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<script>
+function qs(n){ return new URLSearchParams(window.location.search).get(n); }
+async function loadJSON(p){ const r = await fetch(p); return await r.json(); }
+
+async function load(){
+  const token = qs("token") || "public";
+  let tier = "PUBLIC";
+  try{
+    const cust = await loadJSON("./customers.json");
+    const m = (cust.customers||[]).find(c => c.token === token);
+    tier = (m && m.tier) ? m.tier : "PUBLIC";
+  }catch(e){}
+
+  const data = await loadJSON("./trust_center_status.json");
+  document.getElementById("sub").textContent = `Tier: ${tier} • Last updated: ${data.last_updated_utc}`;
+  document.getElementById("sp").textContent = data.trust_overview.security_program;
+
+  const showDetails = tier !== "PUBLIC";
+  const rows = (data.controls||[]).map(c => {
+    const cls = (c.status === "On Track") ? "pill ok" : "pill warn";
+    const last = c.last_tested ? c.last_tested : "—";
+    const det = showDetails ? (c.details || "—") : "<span class='pill lock'>NDA</span>";
+    return `<tr><td>${c.id} – ${c.name}</td><td><span class="${cls}">${c.status}</span></td><td>${last}</td><td>${det}</td></tr>`;
+  }).join("");
+  document.getElementById("rows").innerHTML = rows;
+}
+load();
+</script>
+</body>
+</html>

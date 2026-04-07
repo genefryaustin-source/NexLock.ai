@@ -1,0 +1,19 @@
+{
+  "company": "NexlockAI",
+  "last_updated_utc": "",
+  "trust_overview": {
+    "security_program": "",
+    "encryption": "",
+    "availability": ""
+  },
+  "controls": [],
+  "metrics": {
+    "lookback_days": 90,
+    "controls_on_track": 0,
+    "controls_total": 0
+  },
+  "contact": {
+    "security_email": "security@nexlock.ai",
+    "privacy_email": "privacy@nexlock.ai"
+  }
+}
