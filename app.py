@@ -1232,7 +1232,7 @@ def main():
 
     tabs = st.tabs([
         "Dashboard","Upload","Evidence","PKI Signatures","TSA",
-        "Exceptions","POA&M","Evidence Diff","Document Governance", "Security Aidt", "Trust Center","Admin","Auditor Exports"
+        "Exceptions","POA&M","Evidence Diff","Document Governance", "Security Audit", "Trust Center","Admin","Auditor Exports"
     ])
 
     # Dashboard
